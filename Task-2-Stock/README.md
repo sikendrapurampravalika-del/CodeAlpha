@@ -10,28 +10,23 @@ A Stock Price Tracker is a tool to fetch and display stock prices, historical da
 - Basic performance metrics and summary
 
 ## Technologies Used
-- Python
-- Requests (for API or web requests)
-- Pandas (optional for data display)
+- Python 3
+- Standard library only
+
+## Files
+- `stock.py` — main stock tracker script
 
 ## How to Run
 
-1. Clone the repository
-2. Open terminal in the `Task-2-Stock` folder
-3. Install dependencies if required:
+1. Open terminal in the `Task-2-Stock` folder
+2. Run:
 
 ```bash
-pip install -r requirements.txt
+python stock.py
 ```
 
-4. Run the stock tracker script:
-
-```bash
-python stock_tracker.py
-```
-
-5. Enter a stock ticker symbol when prompted.
+3. Enter a stock ticker symbol when prompted.
 
 ## Notes
-- Update API keys or data source settings in the script as needed.
-- Make sure internet access is available for live stock data.
+- Internet access is required for live stock data retrieval.
+- The script uses fallback sample data if live data cannot be fetched.
