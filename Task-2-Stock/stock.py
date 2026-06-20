@@ -1,107 +1,36 @@
-import json
-import urllib.error
-import urllib.request
-
-SAMPLE_DATA = {
-    "AAPL": {
-        "longName": "Apple Inc.",
-        "symbol": "AAPL",
-        "regularMarketPrice": 175.23,
-        "regularMarketChange": -1.34,
-        "regularMarketChangePercent": -0.76,
-        "currency": "USD",
-        "regularMarketVolume": 55432000,
-        "marketCap": 2745000000000,
-    },
-    "MSFT": {
-        "longName": "Microsoft Corporation",
-        "symbol": "MSFT",
-        "regularMarketPrice": 331.16,
-        "regularMarketChange": 0.81,
-        "regularMarketChangePercent": 0.25,
-        "currency": "USD",
-        "regularMarketVolume": 24480000,
-        "marketCap": 2500000000000,
-    },
-    "GOOGL": {
-        "longName": "Alphabet Inc.",
-        "symbol": "GOOGL",
-        "regularMarketPrice": 142.83,
-        "regularMarketChange": -0.42,
-        "regularMarketChangePercent": -0.29,
-        "currency": "USD",
-        "regularMarketVolume": 1934000,
-        "marketCap": 1820000000000,
-    },
+# Hardcoded stock prices
+stock_prices = {
+    "AAPL": 180,
+    "TSLA": 250,
+    "GOOGL": 150,
+    "MSFT": 300,
+    "AMZN": 200
 }
 
+total_investment = 0
 
-def fetch_stock_data(symbol: str) -> dict:
-    symbol = symbol.strip().upper()
-    if not symbol:
-        return {}
+print("=== Stock Portfolio Tracker ===")
 
-    url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={symbol}"
-    try:
-        with urllib.request.urlopen(url, timeout=10) as response:
-            body = response.read().decode("utf-8")
-            data = json.loads(body)
-            result = data.get("quoteResponse", {}).get("result", [])
-            if not result:
-                return {}
-            return result[0]
-    except (urllib.error.URLError, json.JSONDecodeError, ValueError):
-        return {}
+while True:
+    stock = input("Enter stock symbol (or 'done' to finish): ").upper()
 
+    if stock == "DONE":
+        break
 
-def format_number(value):
-    if value is None:
-        return "N/A"
-    if isinstance(value, int):
-        return f"{value:,}"
-    if isinstance(value, float):
-        return f"{value:.2f}"
-    return str(value)
+    if stock in stock_prices:
+        quantity = int(input(f"Enter quantity of {stock}: "))
 
+        investment = stock_prices[stock] * quantity
+        total_investment += investment
 
-def print_stock_summary(info: dict):
-    if not info:
-        print("No data available for that ticker. Try AAPL, MSFT, or GOOGL.")
-        return
+        print(f"{stock}: {quantity} shares × ${stock_prices[stock]} = ${investment}")
+    else:
+        print("Stock not found!")
 
-    name = info.get("longName") or info.get("shortName") or info.get("symbol")
-    symbol = info.get("symbol", "N/A")
-    price = format_number(info.get("regularMarketPrice"))
-    change = format_number(info.get("regularMarketChange"))
-    percent = format_number(info.get("regularMarketChangePercent"))
-    currency = info.get("currency", "")
-    volume = format_number(info.get("regularMarketVolume"))
-    market_cap = format_number(info.get("marketCap"))
+print("\nTotal Investment Value: $", total_investment)
 
-    print(f"\n{symbol} - {name}")
-    print(f"Price: {price} {currency}")
-    print(f"Change: {change} ({percent}%)")
-    print(f"Volume: {volume}")
-    print(f"Market Cap: {market_cap}")
+# Save result to a text file
+with open("portfolio.txt", "w") as file:
+    file.write(f"Total Investment Value: ${total_investment}")
 
-
-def main():
-    print("Stock Price Tracker")
-    print("Enter a stock ticker symbol like AAPL, MSFT, or GOOGL.")
-
-    symbol = input("Ticker: ").strip()
-    if not symbol:
-        print("Ticker symbol is required.")
-        return
-
-    stock_info = fetch_stock_data(symbol)
-    if not stock_info:
-        stock_info = SAMPLE_DATA.get(symbol.upper(), {})
-        if stock_info:
-            print("\nUnable to fetch live data. Showing fallback sample data.")
-
-    print_stock_summary(stock_info)
-
-
-if __name__ == "__main__":
-    main()
+print("Result saved in portfolio.txt")
